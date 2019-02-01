@@ -1,18 +1,19 @@
 # HashMap底层原理
 ## JDK8的HashMap
+参考：https://www.jianshu.com/p/17177c12f849
 
 ### 源码理解
 1. tableSizeFor方法
 ```java
-    static final int tableSizeFor(int cap) {
-        int n = cap - 1;
-        n |= n >>> 1;
-        n |= n >>> 2;
-        n |= n >>> 4;
-        n |= n >>> 8;
-        n |= n >>> 16;
-        return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
-    }
+static final int tableSizeFor(int cap) {
+    int n = cap - 1;
+    n |= n >>> 1;
+    n |= n >>> 2;
+    n |= n >>> 4;
+    n |= n >>> 8;
+    n |= n >>> 16;
+    return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
+}
 ```
 tableSizeFor(5) ---> 结果是8
 tableSizeFor(11) ---> 结果是16
@@ -20,12 +21,20 @@ tableSizeFor方法对长度进行2幂取整，也就是HashMap长度强制为2�
 
 2. hash方法
 ```java
-    static final int hash(Object key) {
-        int h;
-        return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
-    }
+static final int hash(Object key) {
+    int h;
+    return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+}
 ```
-(h = key.hashCode()) ^ (h >>> 16)：高16位和低16位进行异或运算，可保证hash更加均匀分布
+(h = key.hashCode()) ^ (h >>> 16)：高16位和低16位进行异或运算，可保证hash更加均匀分布，同时数组table的length比较小的时候，也能保证考虑到高低Bit都参与到Hash的计算中，同时不会有太大的开销。
+
+![优化前](https://github.com/suncht/JavaSummarize/images/hashmap00.png)
+
+![优化后](https://github.com/suncht/JavaSummarize/images/hashmap01.png)
+可以看到:
+**扰动函数优化前：1954974080 % 16 = 1954974080 & (16 - 1) = 0**
+**扰动函数优化后：1955003654 % 16 = 1955003654 & (16 - 1) = 6**
+很显然，减少了碰撞的几率。
 
 3. putVal方法中获取数组位置
 ```java
