@@ -28,9 +28,9 @@ static final int hash(Object key) {
 ```
 (h = key.hashCode()) ^ (h >>> 16)：高16位和低16位进行异或运算，可保证hash更加均匀分布，同时数组table的length比较小的时候，也能保证考虑到高低Bit都参与到Hash的计算中，同时不会有太大的开销。
 
-![优化前](https://github.com/suncht/JavaSummarize/images/hashmap00.png)
+![优化前](https://github.com/suncht/JavaSummarize/raw/master/images/hashmap00.png)
 
-![优化后](https://github.com/suncht/JavaSummarize/images/hashmap01.png)
+![优化后](https://github.com/suncht/JavaSummarize/raw/master/images/hashmap01.png)
 可以看到:
 **扰动函数优化前：1954974080 % 16 = 1954974080 & (16 - 1) = 0**
 **扰动函数优化后：1955003654 % 16 = 1955003654 & (16 - 1) = 6**
