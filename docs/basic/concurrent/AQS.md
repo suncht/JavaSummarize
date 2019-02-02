@@ -1,4 +1,4 @@
-#深入理解AbstractQueuedSynchronizer
+# 深入理解AbstractQueuedSynchronizer
 参考：
 https://javadoop.com/2017/07/20/AbstractQueuedSynchronizer/
 https://javadoop.com/2017/07/20/AbstractQueuedSynchronizer-2/
@@ -30,7 +30,7 @@ private transient Thread exclusiveOwnerThread; //继承自AbstractOwnableSynchro
 
 
 AbstractQueuedSynchronizer 的等待队列示意如下所示，注意了，之后分析过程中所说的 queue，也就是阻塞队列不包含 head，不包含 head，不包含 head。
-![等待队列](https://github.com/suncht/JavaSummarize/raw/master/basic/concurrent/images/aqs-0.png)
+![等待队列](https://github.com/suncht/JavaSummarize/raw/master/docs/basic/concurrent/images/aqs-0.png)
 
 等待队列中每个线程被包装成一个 node，数据结构是链表，源码如下：
 ```java
@@ -368,7 +368,7 @@ static final class FairSync extends Sync {
 }
 ```
 这里我们使用3个线程模拟抢占线程，下图显示线程队列和Node的状态
-![](https://github.com/suncht/JavaSummarize/raw/master/basic/concurrent/images/aqs-1.png)
+![](https://github.com/suncht/JavaSummarize/raw/master/docs/basic/concurrent/images/aqs-1.png)
 
 ## 解锁操作
 正常情况下，如果线程没获取到锁，线程会被 LockSupport.park(this); 挂起停止，等待被唤醒。
@@ -451,7 +451,7 @@ private final boolean parkAndCheckInterrupt() {
 }
 // 又回到这个方法了：acquireQueued(final Node node, int arg)，这个时候，node的前驱是head了
 ```
-![](https://github.com/suncht/JavaSummarize/raw/master/basic/concurrent/images/aqs-2.png)
+![](https://github.com/suncht/JavaSummarize/raw/master/docs/basic/concurrent/images/aqs-2.png)
 
 ## 总结
 在并发环境下，加锁和解锁需要以下三个部件的协调：
@@ -481,12 +481,12 @@ private final boolean parkAndCheckInterrupt() {
     }
     ```
     + 线程 2 初始化 head 节点，此时 head==tail, waitStatus==0
-    ![](https://github.com/suncht/JavaSummarize/raw/master/basic/concurrent/images/aqs-3.png)
+    ![](https://github.com/suncht/JavaSummarize/raw/master/docs/basic/concurrent/images/aqs-3.png)
     + 然后线程 2 入队：
-    ![](https://github.com/suncht/JavaSummarize/raw/master/basic/concurrent/images/aqs-4.png)
+    ![](https://github.com/suncht/JavaSummarize/raw/master/docs/basic/concurrent/images/aqs-4.png)
     同时我们也要看此时节点的 waitStatus，我们知道 head 节点是线程 2 初始化的，此时的 waitStatus 没有设置， java 默认会设置为 0，但是到 shouldParkAfterFailedAcquire 这个方法的时候，线程 2 会把前驱节点，也就是 head 的waitStatus设置为-1。
     那线程 2 节点此时的 waitStatus 是多少呢，由于没有设置，所以是 0；
 
     + 如果线程3此时再进来，直接插到线程2的后面就可以了，此时线程 3 的 waitStatus 是 0，到 shouldParkAfterFailedAcquire 方法的时候把前驱节点线程 2 的 waitStatus 设置为 -1。
-    ![](https://github.com/suncht/JavaSummarize/raw/master/basic/concurrent/images/aqs-5.png)
+    ![](https://github.com/suncht/JavaSummarize/raw/master/docs/basic/concurrent/images/aqs-5.png)
     这里可以简单说下 waitStatus 中 SIGNAL(-1) 状态的意思，Doug Lea 注释的是：代表后继节点需要被唤醒。也就是说这个 waitStatus 其实代表的不是自己的状态，而是后继节点的状态，我们知道，每个 node 在入队的时候，都会把前驱节点的状态改为 SIGNAL，然后阻塞，等待被前驱唤醒。这里涉及的是两个问题：有线程取消了排队、唤醒操作。其实本质是一样的，读者也可以顺着 “waitStatus代表后继节点的状态” 这种思路去看一遍源码。
