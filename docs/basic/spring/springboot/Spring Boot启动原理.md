@@ -1,0 +1,3 @@
+# Spring Boot启动过程
+## 前言
+JavaWeb项目开发中大多数都会使用到Spring框架，随着项目越来越庞大，Spring的XML文件配置越来多，使用起来越来越繁琐，此时SpringBoot给我们新理念“约定大于配置”，使用Properties属性文件替代繁琐的XML配置，成为了Java微服务界的标配脚手架，SpringCloud就是基于SpringBoot快速搭建。
