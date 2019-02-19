@@ -97,7 +97,7 @@ protected void addPropertySources(ConfigurableEnvironment environment,
 }
 ```
 Loader是内部类，用于读取属性文件，处理过程如下：
-首先，命令行中是否存在spring.config.location属性值，如果存在，则从指定的路径中加入到locations列表中，源码如下：
+首先，命令行中是否存在`spring.config.location`属性值，如果存在，则从指定的路径中加入到locations列表中，源码如下：
 ```java
 public static final String CONFIG_LOCATION_PROPERTY = "spring.config.location";
 
@@ -166,7 +166,7 @@ org.springframework.boot.env.PropertySourceLoader=\
 org.springframework.boot.env.PropertiesPropertySourceLoader,\
 org.springframework.boot.env.YamlPropertySourceLoader
 ```
-从this.propertiesLoader.getAllFileExtensions()调试中看出，默认有4种文件格式：properties、xml、yml、yaml
+从`this.propertiesLoader.getAllFileExtensions()`调试中看出，默认有4种文件格式：properties、xml、yml、yaml
 ![](images/2019-02-17-22-34-50.png)
 
 PropertiesPropertySourceLoader可加载properties、xml格式属性文件
