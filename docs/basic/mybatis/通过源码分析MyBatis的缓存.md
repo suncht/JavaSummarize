@@ -143,3 +143,4 @@ Executor根据ExecutorType的不同而创建，最常用的是SimpleExecutor，�
     return list;
   }
 ```
+BaseExecutor的属性localCache是个PerpetualCache类型的实例，PerpetualCache类是实现了MyBatis的Cache缓存接口的实现类之一，内部有个Map<Object, Object>类型的属性用来存储缓存数据。 这个localCache的类型在BaseExecutor内部是写死的。 这个localCache就是一级缓存！
