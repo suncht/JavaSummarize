@@ -1,4 +1,5 @@
 ### 1. 安全获取Unsafe
+#### 第一种方式：
 ```java
 private static final Unsafe THE_UNSAFE;
 
@@ -47,6 +48,19 @@ static
 ```
 
 > 关于AccessController，可参考：https://www.zybuluo.com/changedi/note/417132
+
+#### 第二种方式（通过反射）：
+```java
+public static Unsafe reflectUnsafe() {
+    try {
+        Field field = Unsafe.class.getDeclaredField("thisUnsafe");
+        field.setAccessible(true);
+        return (Unsafe)field.get(null);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+```
 
 ### 2. CAS编写
 ```java
